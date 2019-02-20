@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <h2>Some of YouTube videos I liked</h2>
+        {% for src in yt %}
+        <div class="col">
+            <h3>{{src.author}}</h3>
+          <iframe width="600" height="400" src="{{src.videoUrl}}" allowfullscreen></iframe>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="row">
+        <h2>Some of Twitch channels I follow</h2>
+        {% for src in tw %}
+        <div class="col">
+            <h3>{{src.author}}</h3>
+          <iframe width="600" height="400" src="{{src.streamUrl}}" allowfullscreen></iframe>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}

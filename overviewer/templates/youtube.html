@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        {% for src in yt %}
+        <div class="col">
+            <h3>{{src.author}}</h3>
+          <iframe width="600" height="400" src="{{src.videoUrl}}" allowfullscreen></iframe>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

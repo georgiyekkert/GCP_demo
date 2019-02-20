@@ -1,0 +1,6 @@
+Flask>=1.0.0
+Flask-SQLAlchemy==2.3.2
+PyMySQL==0.9.2
+requests[security]==2.20.1
+sqlalchemy==1.2.18
+gunicorn==19.3.0

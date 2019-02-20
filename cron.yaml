@@ -1,0 +1,12 @@
+cron:
+- description: "daily Youtube Liked job"
+  url: /cronyt
+  schedule: every 24 hours
+
+- description: "daily Twitch Following job"
+  url: /crontw_following
+  schedule: every 24 hours
+
+- description: "Checking Streams Online job"
+  url: /crontw_live
+  schedule: every 30 mins
