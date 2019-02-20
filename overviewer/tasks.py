@@ -15,7 +15,7 @@ def cron_tw():
         known_streams = list(map(from_sql, Twitch.query.all()))
 
         if len(following_streams) == len(known_streams):
-            return 200
+            return "Up to date", 200
         else:
             update_db_with_new_streams(set([i["to_name"] for i in following_streams]) - set([i['author'] for i in known_streams]))
             return 'Updated', 200
@@ -48,14 +48,19 @@ def check_tw_live():
 @cron.route("/cronyt")
 def cron_yt():
     if "X-Appengine-Cron" in request.headers:
-        liked = requests.get("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=%s&key=%s"
+        all_videos = requests.get("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=%s&key=%s"
                          % (playlist_id, yt_id)).json()["items"]
         known_videos = list(map(from_sql, YouTube.query.all()))
 
-        if len(known_videos) == len(liked):
-            return 200
+        if len(known_videos) == len(all_videos):
+            return "Up to date", 200
         else:
-            update_db_with_new_videos(liked, set(i["snippet"]["title"] for i in liked) - set(i["name"] for i in known_videos))
+            new = {video["snippet"]["title"]: video["snippet"]["resourceId"]["videoId"] for video in all_videos}
+            for known in known_videos:
+                if known['name'] in new.keys():
+                    new.pop(known['name'])
+
+            update_db_with_new_videos(new)
             return 'Updated', 200
     return "Not Updated"
 
@@ -69,12 +74,9 @@ def update_db_with_new_streams(new_streams):
         create(data, cls=Twitch)
 
 
-def update_db_with_new_videos(all_videos, new_videos):
-    for new_video in new_videos:
-        data = {"name": new_video}
-        for video in all_videos:
-            if video["snippet"]["title"] == new_video:
-                data["videoUrl"] = "https://www.youtube.com/embed/"+video["snippet"]["resourceId"]["videoId"]
+def update_db_with_new_videos(new_videos):
+    for video_name, url in new_videos.items():
+        data = {"name": video_name, "videoUrl": "https://www.youtube.com/embed/"+url}
         create(data, cls=YouTube)
 
 
