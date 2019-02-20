@@ -29,13 +29,13 @@ def check_tw_live():
 
         ids = [i['author'] for i in followed]
 
-        response = requests.get(url="https://api.twitch.tv/helix/streams?%s" % make_request_string(ids, "user_login") +
+        followed_alive = requests.get(url="https://api.twitch.tv/helix/streams?%s" % make_request_string(ids, "user_login") +
                                 'first=100', headers={"Client-ID": "%s" % client_id}).json()['data']
 
-        response = [user["user_name"].lower() for user in response]
+        followed_alive = [user["user_name"].lower() for user in followed_alive]
 
         for stream in followed:
-            if stream["author"] in response:
+            if stream["author"] in followed_alive:
                 data = {"description": "live"}
                 update(data, stream['id'], Twitch)
             else:
@@ -48,21 +48,22 @@ def check_tw_live():
 @cron.route("/cronyt")
 def cron_yt():
     if "X-Appengine-Cron" in request.headers:
-        r = requests.get("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=%s&key=%s"
+        liked = requests.get("https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&playlistId=%s&key=%s"
                          % (playlist_id, yt_id)).json()["items"]
         known_videos = list(map(from_sql, YouTube.query.all()))
-        if len(known_videos) == len(r):
+
+        if len(known_videos) == len(liked):
             return 200
         else:
-            update_db_with_new_videos(r, set(i["snippet"]["title"] for i in r) - set(i["name"] for i in known_videos))
+            update_db_with_new_videos(liked, set(i["snippet"]["title"] for i in liked) - set(i["name"] for i in known_videos))
             return 'Updated', 200
     return "Not Updated"
 
 
 def update_db_with_new_streams(new_streams):
-    r = requests.get(url="https://api.twitch.tv/helix/users?%s" % make_request_string(new_streams, "login"),
+    streams_info = requests.get(url="https://api.twitch.tv/helix/users?%s" % make_request_string(new_streams, "login"),
                      headers={"Client-ID": "%s" % client_id}).json()['data']
-    for stream in r:
+    for stream in streams_info:
         data = {"author": stream['login'], "streamUrl": "twitch.tv/" + stream['display_name'],
                 "profileImgUrl": stream['profile_image_url']}
         create(data, cls=Twitch)
