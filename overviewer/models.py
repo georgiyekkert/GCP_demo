@@ -29,6 +29,18 @@ class YouTube(db.Model):
         return "<Video(name=%s, url=%s)" % (self.name, self.videoUrl)
 
 
+class Memes(db.Model):
+    __tablename__ = "memes"
+    id = db.Column(db.Integer, primary_key=True)
+    url = db.Column(db.String(255))
+    author = db.Column(db.String(255))
+    date = db.Column(db.String(255))
+    labels = db.Column(db.String(255))
+
+    def __repr__(self):
+        return "<Meme(url=%s)" % self.url
+
+
 def init_app(app):
     app.config.setdefault('SQLALCHEMY_TRACK_MODIFICATIONS', False)
     db.init_app(app)
@@ -53,6 +65,11 @@ def update(data, id, cls):
     for k, v in data.items():
         setattr(item, k, v)
     db.session.commit()
+    return from_sql(item)
+
+
+def get(id, cls):
+    item = cls.query.get(id)
     return from_sql(item)
 
 

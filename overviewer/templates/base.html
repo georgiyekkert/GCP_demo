@@ -15,10 +15,21 @@
         <ul class="nav navbar-nav">
           <li><a href="/twitch">Twitch</a></li>
           <li><a href="/youtube">YouTube</a></li>
+          <li><a href="/users_memes">Memes Uploaded by Users</a></li>
         </ul>
+        <p class="navbar-text navbar-right">
+        {% if session.profile %}
+            {% if session.profile.image %}
+              <img class="img-circle" src="{{session.profile.image.url}}" width="24">
+            {% endif %}
+            {{session.profile.displayName}}
+          <a href="/logout"> Logout</a>
+        {% else %}
+          <a href="/oauth2authorize">Login</a>
+        {% endif %}
+        </p>
       </div>
     </div>
-
     <div class="container">
       {% block content %}{% endblock %}
     </div>

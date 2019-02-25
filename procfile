@@ -1,0 +1,2 @@
+main: gunicorn -b 0.0.0.0:$PORT main:app
+worker: psqworker --pid /tmp/psq.pid main.queue

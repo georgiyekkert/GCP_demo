@@ -24,7 +24,10 @@ user_id = ""
 client_id = ""
 yt_id = ""
 playlist_id = ""
-
+PROJECT_ID = ""
+GOOGLE_OAUTH2_CLIENT_ID = ""
+GOOGLE_OAUTH2_CLIENT_SECRET = ""
+CLOUD_STORAGE_BUCKET = ""
 
 if os.environ.get('GAE_INSTANCE'):
     SQLALCHEMY_DATABASE_URI = LIVE_SQLALCHEMY_DATABASE_URI

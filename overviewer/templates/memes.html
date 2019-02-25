@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h3><a href="/add">Add your own meme</a></h3>
+    <div class ="row">
+        {% for src in memes %}
+        <div class="col">
+            <h4>Author: {{src.author}}</h4>
+            <h4>Added: {{src.date}}</h4>
+            {% if src.labels %}
+            <h4>Category: {{src.labels}}</h4>
+            {% endif %}
+            <img src="{{src.url}}" width="640" height="480">
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -17,7 +17,7 @@ def cron_tw():
         if len(following_streams) == len(known_streams):
             return "Up to date", 200
         else:
-            update_db_with_new_streams(set([i["to_name"] for i in following_streams]) - set([i['author'] for i in known_streams]))
+            update_db_with_new_streams(set([i["to_name"].lower() for i in following_streams]) - set([i['author'].lower() for i in known_streams]))
             return 'Updated', 200
     return "Not Updated"
 
@@ -69,7 +69,7 @@ def update_db_with_new_streams(new_streams):
     streams_info = requests.get(url="https://api.twitch.tv/helix/users?%s" % make_request_string(new_streams, "login"),
                      headers={"Client-ID": "%s" % client_id}).json()['data']
     for stream in streams_info:
-        data = {"author": stream['login'], "streamUrl": "twitch.tv/" + stream['display_name'],
+        data = {"author": stream['login'], "streamUrl": "https://player.twitch.tv/?channel=" + stream['display_name'],
                 "profileImgUrl": stream['profile_image_url']}
         create(data, cls=Twitch)
 
